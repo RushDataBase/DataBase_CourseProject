@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}
+{{ article.title }}
+{% endblock %}
+
+{% block head %}
+    <style>
+        #workShop {
+            margin-top: 150px;
+        }
+    </style>
+    <script src="{{ static('ckeditor/ckeditor.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="workShop" class="container">
+        <div>
+            <p>{{ article.title }}</p>
+        </div>
+
+        <div class="list_con">
+            <p>{{ article.author.username }}</p>
+        </div>
+        <div>
+            {{ article.content | safe }}
+        </div>
+    </div>
+    <div name="comments" class="container">
+        {% for comment in comments %}
+            <div>
+                <p> {{ comment.content |safe }}</p>
+            </div>
+            <div>
+                <p> {{ comment.author.username}}</p>
+            </div>
+            <div>
+                <p> {{ comment.register_time }}</p>
+            </div>
+        {% endfor %}
+        <div class="container">
+            <form method="post">
+                <div class="form-group">
+                    <textarea name="content" id="editor1">
+                    来发表你的评论吧
+                    </textarea>
+                    <script>CKEDITOR.replace('editor1')</script>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">发表评论</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

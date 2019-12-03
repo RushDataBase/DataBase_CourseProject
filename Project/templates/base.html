@@ -1,0 +1,97 @@
+{% from "_macros.html" import static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ static('bootstrap-3.3.7-dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ static('css/cover.css') }}" rel="stylesheet">
+    <!-- <link href="carousel.css" rel="stylesheet"> -->
+    {% block head %}
+    {% endblock %}
+
+
+  </head>
+
+  <body>
+
+    <div class="container">
+        <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+              <div class="container">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <a class="navbar-brand" href="#">S9世界总决赛</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav">
+                    <li id="index"><a href="{{ url_for('front.index') }}">主页</a></li>
+                    <li id="discussion"><a href="{{ url_for('front.discussion') }}">讨论区</a></li>
+{#                    <li><a href="#contact">个人中心</a></li>#}
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">赛事资料 <span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li><a href="#">赛程</a></li>
+                        <li><a href="#">比赛数据</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li class="dropdown-header">参赛战队</li>
+                        <li><a href="#">战队资料</a></li>
+                        <li><a href="#">选手资料</a></li>
+                      </ul>
+                    </li>
+                      {% if not current_user.is_anonymous %}
+                      <li><a href="{{ url_for('front.selfcenter', user_id=current_user.id) }}">个人中心</a></li>
+                      {% endif  %}
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            var loaction = window.location.href;
+                            var id = loaction.substring(location.lastIndexOf('/')+1);
+                            $('#'+id).addClass("active")
+                        });
+                    </script>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                     {% if not current_user.is_anonymous %}
+                         <li><a>{{current_user.username}}</a></li>
+                         <li><a href="{{ url_for('front.logout') }}">退出</a></li>
+                     {% else %}
+                         <li><a href="{{ url_for('front.login') }}">登录</a></li>
+                         <li><a href="{{ url_for('front.signup') }}">注册 <span class="sr-only">(current)</span></a></li>
+                     {% endif %}
+
+                  </ul>
+                </div><!--/.nav-collapse -->
+                </div>
+             </nav>
+    </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+    {% block scripts %}
+    {% endblock %}
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ static("bootstrap-3.3.7-dist/js/jquery-3.4.1.min.js") }}"></script>
+    <script src="{{ static("bootstrap-3.3.7-dist/js/bootstrap.min.js") }}"></script>
+  </body>
+</html>

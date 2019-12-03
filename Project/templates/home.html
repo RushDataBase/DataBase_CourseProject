@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}
+    S9总决赛
+{% endblock %}
+{% block head %}
+    <style>
+        body {
+            background-image: url('{{ static('img/S9_1.jpg') }}');
+            background-position: center 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            -moz-background-size: cover;
+            -ms-background-size: cover;
+        }
+        {% block style_extend %}
+        {% endblock %}
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+            <div class="inner cover">
+            <h1 class="cover-heading">S9世界总决赛</h1>
+            <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+            <p class="lead">
+              <a href="#" class="btn btn-lg btn-default">Learn more</a>
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+{% endblock %}
+

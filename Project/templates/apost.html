@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}
+    发布帖子
+{% endblock %}
+{% block head %}
+    <style>
+        body {
+            background-image: url('{{ static('img/S9_1.jpg') }}');
+            background-position: center 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            -moz-background-size: cover;
+        }
+        #workShop {
+            margin-top: 150px;
+        }
+    </style>
+
+    <script src="{{ static('ckeditor/ckeditor.js') }}"></script>
+{% endblock %}
+{% block content %}
+{#    </div>#}
+    <div id="workShop" class="container">
+        <form method="post">
+            <div class="form-group">
+                <div class="input-group">
+                <label for="inputTitle" class="sr-only">标题</label>
+                <input type="text" id="inputTitle" class="form-control" placeholder="Title address" name="title" required autofocus>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                <label for="inputTitle" class="sr-only">板块</label>
+                <select name="board_id" class="form-control">
+                    {% for board in boards %}
+                        <option value="{{ board.id }}">{{ board.name }}</option>
+                    {% endfor %}
+                </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <textarea name="content" id="editor1" rows="10" cols="80">
+                this is testarea
+                </textarea>
+                <script>CKEDITOR.replace('editor1')</script>
+            </div>
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Publish</button>
+        </form>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+{% endblock %}

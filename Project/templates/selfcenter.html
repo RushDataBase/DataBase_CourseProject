@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}
+    个人中心
+{% endblock %}
+
+{% block head %}
+
+    <style>
+        .helloTop {
+            background-image: url('{{ static('img/S9_1.jpg') }}');
+            -webkit-backdrop-filter: blur(10px);
+            height: 400px;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            -moz-background-size: cover;
+            {#-ms-background-size: cover;#}
+        }
+    </style>
+
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="jumbotron helloTop">
+        <div class="">
+
+        </div>
+        {#    这里放user name    #}
+      <h1>Hello, xxx!</h1>
+      <p>...</p>
+
+        <br>
+        <br>
+        <div class="btn-group btn-group-lg" role="group" aria-label="..." style="padding-top: 40px">
+            <button type="button" class="btn btn-primary"> Message <span class="badge">3</span></button>
+            <button type="button" class="btn btn-primary"> Articles</button>
+{#            <button type="button" class="btn btn-primary"> </button>#}
+        </div>
+    </div>
+
+    <div class="row col-md-8 col-md-offset-1">
+        <div class="row featurette col-md-11">
+
+                <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+                <br>
+                <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+        </div>
+
+
+        <div class="row featurette col-md-11">
+
+                <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+                <br>
+                <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+
+        </div>
+
+        <div class="row featurette col-md-11">
+
+                <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+                <br>
+                <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+
+        </div>
+    </div>
+
+    <div class="col-sm-3">
+        <ul class="list-group">
+            <li class="list-group-item active">Articles</li>
+            <li class="list-group-item active">Articles</li>
+            <li class="list-group-item active">Articles</li>
+            <li class="list-group-item active">Articles</li>
+            <li class="list-group-item active">Articles</li>
+
+            <li class="list-group-item"><a href="#" class="text-primary">March 2014</a></li>
+            <li class="list-group-item"><a href="#" class="text-primary">February 2014</a></li>
+            <li class="list-group-item"><a href="#" class="text-primary">January 2014</a></li>
+            <li class="list-group-item"><a href="#" class="text-primary">December 2013</a></li>
+            <li class="list-group-item"><a href="#" class="text-primary">November 2013</a></li>
+            <li class="list-group-item"><a href="#" class="text-primary">October 2013</a></li>
+            <li class="list-group-item"><a href="#" class="text-primary">September 2013</a></li>
+        </ul>
+    </div><!-- /.blog-sidebar -->
+
+
+{% endblock %}
+
+
