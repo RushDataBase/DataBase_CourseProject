@@ -12,7 +12,10 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128))
     register_time = db.Column(db.DateTime, default=datetime.now)
-    power = db.Column(db.Enum('tourist, admin'), default='tourist')
+    admin = db.Column(db.Integer, default=0)
+    article_num = db.Column(db.Integer, default=0)
+    articles = db.relationship('Article', backref='author', cascade='delete')
+    comments = db.relationship('Comment', backref='author', cascade='delete')
 
     def __init__(self, username, password, email):
         self.username = username
@@ -33,18 +36,22 @@ class User(UserMixin, db.Model):
     def get_support_team(self):
         return self.support_team
 
-    def set_power(self, power):
-        self.power = power
-
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+    @staticmethod
+    def delete_by_id(id):
+        user = User.query.get(id)
+
 
 class Board(db.Model):
     __tablename__ = 'board'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(64), unique=True)
-    article_num = db.Column(db.Integer)
+    article_num = db.Column(db.Integer, default=0)
     register_time = db.Column(db.DateTime, default=datetime.now)
+    articles = db.relationship('Article', backref='board', cascade='delete')
 
     def __init__(self, name):
         self.name = name
@@ -57,23 +64,25 @@ class Article(db.Model):
     content = db.Column(db.Text, nullable=False)
     comment_num = db.Column(db.Integer, default=0)
     register_time = db.Column(db.DateTime, default=datetime.now)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = db.relationship('User', backref='posts')
     board_id = db.Column(db.Integer, db.ForeignKey('board.id'))
-    board = db.relationship('Board', backref='posts')
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    comments = db.relationship('Comment', backref='posts', cascade='delete')
 
-    def __init__(self, title, content):
+    def __init__(self, title, content, board, user):
         self.title = title
         self.content = content
+        self.author = user
+        self.board = board
+        user.article_num += 1
+        board.article_num += 1
+
 
 class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     content = db.Column(db.String(256), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    author = db.relationship('User', backref='comments')
     article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
-    article = db.relationship('Article', backref='comments')
 
     def __init__(self, content, article_id):
         self.content = content
@@ -213,18 +222,3 @@ class GameSchedule(db.Model):
         self.desc = desc
 
 
-@event.listens_for(Comment, 'after_insert')
-def receive_after_insert(mapper, connection, target):
-    target.article.comment_num += 1
-
-
-@event.listens_for(Article, 'after_insert')
-def receive_after_insert(mapper, connection, target):
-    print(connection)
-    print(target.board)
-    print(target)
-    print(target.board.article_num)
-    t = target.board.article_num
-    target.board.article_num = t + 1
-    print(target.board.article_num)
-    target.session.commit()

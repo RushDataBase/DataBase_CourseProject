@@ -36,9 +36,7 @@ def apost():
             if not board:
                 print("板块不存在")
                 return redirect(url_for('front.apost'))
-            post = Article(title=title, content=content)
-            post.board = board
-            post.author = current_user
+            post = Article(title=title, content=content, board=board, user=current_user)
             db.session.add(post)
             db.session.commit()
             print("帖子发布成功")
@@ -57,6 +55,8 @@ def article(article_id):
     if request.method == 'GET':
         return render_template("article.html", article=article)
     else:
+        if not current_user.is_authenticated:
+            return redirect(url_for('front.login'))
         form = CommentForm(request.form)
         if form.validate():
             content = form.content.data
@@ -109,7 +109,7 @@ def player(player_id):
 @bp.route('/games', methods=['GET', 'POST'])
 def game():
     if request.method == 'POST':
-        if current_user.is_authenticated and current_user.power == 'admin':
+        if current_user.is_authenticated and current_user.admin:
             form = GameForm(request.form)
             winner = form.winner.data
             loser = form.loser.data
@@ -130,7 +130,7 @@ def agame(game_id):
     if game is None:
         return "不存在该比赛"
     if request.method == 'POST':
-        if current_user.is_authenticated and current_user.power == 'admin':
+        if current_user.is_authenticated and current_user.admin:
             form = AGameForm(request.form)
             red_team = form.red_team.data
             blue_team = form.blue_team.data

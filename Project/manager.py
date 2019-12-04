@@ -23,6 +23,20 @@ def create_cms_user(username, password, email):
     db.session.commit()
     print("cms add user successfully")
 
+@manager.option('-i', '--id', dest='id')
+@manager.option('-a', '--admin', dest='admin')
+def set_user_admin(id, admin):
+    user = model.User.query.get(id)
+    user.admin = admin
+    db.session.commit()
+
+@manager.option('-i', '--id', dest='id')
+def delete_board(id):
+    board = model.Board.query.get(id)
+    db.session.delete(board)
+    db.session.commit()
+
+
 
 @manager.option('-t', '--team_name', dest='team_name')
 @manager.option('-a', '--team_area', dest='team_area')
