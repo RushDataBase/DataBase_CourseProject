@@ -1,12 +1,12 @@
 from flask import Flask
-from config import Config
+import config
 from flaskr import bp
 from ext import db, login, ckeditor
 
 
 def create_app():
     app = Flask('__name__')
-    app.config.from_object(Config)
+    app.config.from_object(config)
 
     app.register_blueprint(bp)
 

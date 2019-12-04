@@ -44,7 +44,7 @@
                 <div id="navbar" class="navbar-collapse collapse">
                   <ul class="nav navbar-nav">
                     <li id="index"><a href="{{ url_for('front.index') }}">主页</a></li>
-                    <li id="discussion"><a href="{{ url_for('front.discussion') }}">讨论区</a></li>
+                    <li id="discussion"><a href="{{ url_for('front.discussion',board_id=0) }}">讨论区</a></li>
 {#                    <li><a href="#contact">个人中心</a></li>#}
                     <li class="dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">赛事资料 <span class="caret"></span></a>
@@ -53,7 +53,7 @@
                         <li><a href="#">比赛数据</a></li>
                         <li role="separator" class="divider"></li>
                         <li class="dropdown-header">参赛战队</li>
-                        <li><a href="#">战队资料</a></li>
+                        <li><a href="{{ url_for('front.teams') }}">战队资料</a></li>
                         <li><a href="#">选手资料</a></li>
                       </ul>
                     </li>

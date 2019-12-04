@@ -1,9 +1,11 @@
 from flask.blueprints import Blueprint
 from flask import render_template, views, request, url_for, redirect
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_paginate import Pagination, get_page_parameter
 from ext import login, db
 from .model import User, Board, Article, Comment, Player, Team, Game, OneGame, Hero, GameSchedule
 from .forms import LoginForm, SignupForm, PostForm, CommentForm, SelfCenterForm, AGameForm, GameForm
+import config
 bp = Blueprint("front", __name__, )
 
 
@@ -12,11 +14,28 @@ def index():
     return render_template('home.html', current_user=current_user)
 
 
-@bp.route('/dicussion')
+@bp.route('/discussion')
 def discussion():
     boards = Board.query.all()
-    articles = Article.query.all()
-    return render_template('discussion.html', current_user=current_user, boards=boards, articles=articles)
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    board_id = request.args.get('board_id', type=int, default=0)
+    sort_type = request.args.get('sort', type=int, default=0)
+    start = (page-1)*config.PER_PAGE
+    end = start + config.PER_PAGE
+    query_obj = Article.query
+
+    if sort_type == 1:
+        query_obj = query_obj.filter(board_id == 0 or Article.board_id == board_id).order_by(Article.register_time.desc())
+    elif sort_type == 2:
+        query_obj = query_obj.filter(board_id == 0 or Article.board_id == board_id).order_by(Article.comment_num.desc())
+    else:
+        query_obj = query_obj.filter(board_id == 0 or Article.board_id == board_id)
+
+    articles = query_obj.slice(start, end)
+    total = query_obj.count()
+    pagination = Pagination(bs_version=3, page=page, total=total)
+    return render_template('discussion.html', current_user=current_user, boards=boards,
+                           articles=articles, pagination=pagination)
 
 
 @bp.route('/apost', methods=['GET', 'POST'])
@@ -62,9 +81,8 @@ def article(article_id):
             comment = Comment(content=content, article_id=article_id)
             comment.author = current_user
             comment.article = article
-            now_article.comments.append(comment)
             print("评论成功")
-            return render_template("article.html", article=article, comments=now_article.comments)
+            return render_template("article.html", article=now_article, comments=now_article.comments)
         else:
             print("评论失败")
             return redirect(url_for('front.article', article_id=article_id))
@@ -89,7 +107,8 @@ def team(team_id):
         return "该战队不存在"
     return render_template('team.html', current_user=current_user, team=team)
 
-
+# 放弃选手页面，没有什么东西
+'''
 @bp.route('/players')
 def players():
     players = Player.query.all()
@@ -102,7 +121,7 @@ def player(player_id):
     if player is None:
         return "该选手不存在"
     return render_template('player.html', current_user=current_user, player=player)
-
+'''
 
 #比赛数据(查询和修改删除数据)
 @bp.route('/games')

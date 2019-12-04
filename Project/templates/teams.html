@@ -9,21 +9,20 @@ S9世界赛参赛战队
 {% endblock %}
 
 {% block content %}
-    <div class="container" style="background-image: url('{{ static('img/S9_1.jpg') }}'); margin-top: 150px">
-        <div class="panel panel-group">
-            <div class="panel-heading">S9总决赛八强战队</div>
+    <div class="container" style="margin-top: 100px">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="font-size: xx-large; text-align: center;">S9总决赛八强战队</div>
             <div class="panel-body">
                 {% for team in teams %}
                     <div class="col-xs-6 col-md-3">
-                        <a href="#" class="thumbnail">
+                        <a href="{{ url_for('front.team', team_id=team.id) }}" class="thumbnail">
                           <img src="{{ static(team.logo_addr) }}" alt="...">
                         </a>
-                        <span>{{ team.team_name }}</span>
+                        <p style="text-align: center;">{{ team.team_name }}</p>
                     </div>
                 {% endfor %}
             </div>
         </div>
-
     </div>
 
     

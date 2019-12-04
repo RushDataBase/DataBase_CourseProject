@@ -151,13 +151,14 @@
                             </select>
                                 Order:
                             <select id="orderby" name="orderby">
-                                <option selected value="0">Publish</option>
-                                <option value="1">Author</option>
+                                <option selected value="0"><a href="{{ url_for('front.discussion',sort=1) }}">最新发表</a></option>
+                                <option value="1"><a href="{{ url_for('front.discussion',sort=2) }}">评论最多</a></option>
                             </select>
-                            <select id="desc" name="desc">
-                                <option selected value="0">Desc</option>
-                                <option value="1">Asc</option>
-                            </select>
+                            {#
+                            {#                            <select id="desc" name="desc">
+                            {#                                <option selected value="0">Desc</option>
+                            {#                                <option value="1">Asc</option>
+                            {#                            </select> #}
                         </div>
                         <div class="col-sm-2 hidden-xs">
                             作者
@@ -213,6 +214,9 @@
                 {% endfor %}
             </div> <!--pannel-->
         </div> <!--col-md-12 讨论区帖子表格-->
+        <div style="text-align: center">
+            {{ pagination.links }}
+        </div>
     </div> <!--row 左边大块-->
 
     {#  右边栏 #}
@@ -230,38 +234,18 @@
             <ul class="nav nav-pills" role="tablist" style="margin-top: 20px; margin-left: 30px">
                 {% for board in boards %}
                     <li role="presentation">
-                        <a href="#"><p class="text-primary">{{ board.name }}</p><span class="badge">{{ board.article_num }}</span></a>
+                        <a href="{{ url_for('front.discussion', board_id=board.id)}}"><p class="text-primary">{{ board.name }}</p><span class="badge">{{ board.article_num }}</span></a>
                     </li>
                 {% endfor %}
+                <li role="presentation" style="text-align: center">
+                        <a href="{{ url_for('front.discussion',board_id=0)}}"><p class="text-primary">所有板块</p></a>
+                </li>
             </ul>
     </div>
 
 
 
     {#  place holder  #}
-    <div class="col-md-1"></div>
-
-    <div class="col-md-4 col-lg-offset-4">
-        <nav aria-label="Page navigation">
-          <ul class="pagination">
-            <li>
-              <a href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li class="active"><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li>
-              <a href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-    </div>
 
 
 {% endblock %}
