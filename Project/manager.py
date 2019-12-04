@@ -52,6 +52,46 @@ def create_board(name):
     db.session.add(board)
     db.session.commit()
 
+@manager.option('-f', '--file', dest='file')
+def import_players(file):
+    with open(file, 'r') as f:
+        for j in range(8):
+            info = f.readline()
+            if info is None:
+                break
+            team = info.split(':')[-1]
+            team = team.strip()
+            team = model.Team.query.filter_by(team_name=team.upper()).first()
+            print(team)
+            for i in range(5):
+                player_info = f.readline()
+                player_infos = player_info.split(',')
+                player_name = player_infos[0].strip()
+                player_position = player_infos[1].strip()
+                player = model.Player(player_name, player_position)
+                player.team = team
+                addr = ('img/player/' + player_name + '.png')
+                player.add_img(addr)
+                print(player_name + ":" + player_position)
+                db.session.add(player)
+                db.session.commit()
+            print('++++++++++++++++++++++')
+
+@manager.option('-f', '--file', dest='file')
+def import_teams(file):
+    with open(file, 'r') as f:
+        for i in range(8):
+            info = f.readline()
+            team_info = info.split(',')
+            team_name = team_info[0].strip()
+            team_area = team_info[1].strip()
+            team = model.Team(team_name=team_name, team_area=team_area)
+            addr = ('img/logo/' + team_name.lower() + '.png')
+            team.set_logo_addr(addr)
+            print(team_name + ', ' + team_area + ', ' + addr)
+            db.session.add(team)
+            db.session.commit()
+
 
 if __name__ == '__main__':
     manager.run()

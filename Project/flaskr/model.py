@@ -42,11 +42,6 @@ class User(UserMixin, db.Model):
         return '<User %r>' % self.username
 
 
-    @staticmethod
-    def delete_by_id(id):
-        user = User.query.get(id)
-
-
 class Board(db.Model):
     __tablename__ = 'board'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -96,10 +91,11 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     team_name = db.Column(db.String(64), unique=True)
     logo_addr = db.Column(db.String(128), unique=True)
-    team_area = db.Column(db.String(64), unique=True)
-    win_num = db.Column(db.Integer)
-    lost_num = db.Column(db.Integer)
+    team_area = db.Column(db.String(64))
+    win_num = db.Column(db.Integer, default=0)
+    lost_num = db.Column(db.Integer, default=0)
     s9_rank = db.Column(db.String(128))
+    players = db.relationship('Player', backref='team', cascade='delete')
 
     def __init__(self, team_name, team_area):
         self.team_name = team_name
@@ -127,21 +123,20 @@ class Team(db.Model):
 class Player(db.Model):
     __tablename__ = 'player'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(64), unique=True)
+    img_addr = db.Column(db.String(128), default='img/player/default.png')
+    #name = db.Column(db.String(64), unique=True)
     game_name = db.Column(db.String(64), unique=True)
     #age = db.Column(db.Integer)
     #s9_total_games = db.Column(db.Integer)
-    position = db.Column(db.Enum('Top', 'Jungle', 'Mid', 'ADC', 'Support'))
+    position = db.Column(db.String(64))
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
-    team = db.relationship('Team', backref="players")
 
-    def __init__(self, name, game_name, position):
-        self.name = name
+    def __init__(self, game_name, position):
         self.game_name = game_name
         self.position = position
 
-    def add_total_games(self):
-        self.s9_total_games += 1
+    def add_img(self, img_addr):
+        self.img_addr = img_addr
 
 
 class Hero(db.Model):
