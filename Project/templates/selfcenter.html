@@ -17,7 +17,7 @@
             -webkit-background-size: cover;
             -o-background-size: cover;
             -moz-background-size: cover;
-            {#-ms-background-size: cover;#}
+            /*{#-ms-background-size: cover;#}*/
         }
     </style>
 
@@ -27,16 +27,14 @@
 {% block content %}
 
     <div class="jumbotron helloTop">
-        <div class="">
-
+        <div class="text-center">
+            {#    这里放user name    #}
+            <h1>Hello, xxx!</h1>
+            <p>...</p>
+            <br>
+            <br>
         </div>
-        {#    这里放user name    #}
-      <h1>Hello, xxx!</h1>
-      <p>...</p>
-
-        <br>
-        <br>
-        <div class="btn-group btn-group-lg" role="group" aria-label="..." style="padding-top: 40px">
+        <div class="btn-group btn-group-lg text-center" role="group" aria-label="..." style="padding-top: 40px">
             <button type="button" class="btn btn-primary"> Message <span class="badge">3</span></button>
             <button type="button" class="btn btn-primary"> Articles</button>
 {#            <button type="button" class="btn btn-primary"> </button>#}
@@ -70,7 +68,7 @@
     </div>
 
     {# 希望点击不同的右边显示不同的页面#}
-    <div class="col-sm-3">
+    <div class="col-sm-3" >
         <ul class="list-group">
             <li class="list-group-item active">个人信息</li>
             <li class="list-group-item active">文章管理</li>
