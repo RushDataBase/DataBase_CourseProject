@@ -194,7 +194,7 @@ class SignupView(views.MethodView):
             user = User(username=username, password=password, email=email)
             db.session.add(user)
             db.session.commit()
-            return url_for('front.login', current_user=current_user)
+            return redirect(url_for('front.login'))
         else:
             print(form.errors)
             return self.get()
