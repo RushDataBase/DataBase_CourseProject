@@ -2,7 +2,7 @@ from flask.blueprints import Blueprint
 from flask import render_template, views, request, url_for, redirect
 from flask_login import login_user, current_user, logout_user, login_required
 from ext import login, db
-from .model import User, Board, Article, Comment, Player, Team, Game, OneGame, Hero
+from .model import User, Board, Article, Comment, Player, Team, Game, OneGame, Hero, GameSchedule
 from .forms import LoginForm, SignupForm, PostForm, CommentForm, SelfCenterForm, AGameForm, GameForm
 bp = Blueprint("front", __name__, )
 
@@ -32,7 +32,6 @@ def apost():
             content = form.content.data
             board_id = form.board_id.data
             board = Board.query.get(board_id)
-            print(content)
             if not board:
                 print("板块不存在")
                 return redirect(url_for('front.apost'))
@@ -49,11 +48,11 @@ def apost():
 @bp.route('/article/<article_id>', methods=['GET', 'POST'])
 @login_required
 def article(article_id):
-    article = Article.query.get(article_id)
+    now_article = Article.query.get(article_id)
     if article is None:
         return "该文章不存在"
     if request.method == 'GET':
-        return render_template("article.html", article=article)
+        return render_template("article.html", article=now_article)
     else:
         if not current_user.is_authenticated:
             return redirect(url_for('front.login'))
@@ -63,9 +62,9 @@ def article(article_id):
             comment = Comment(content=content, article_id=article_id)
             comment.author = current_user
             comment.article = article
-            article.comments.append(comment)
+            now_article.comments.append(comment)
             print("评论成功")
-            return render_template("article.html", article=article, comments=article.comments)
+            return render_template("article.html", article=article, comments=now_article.comments)
         else:
             print("评论失败")
             return redirect(url_for('front.article', article_id=article_id))
@@ -73,14 +72,14 @@ def article(article_id):
 #赛程(只需要查询数据)
 @bp.route('/gameSchedule')
 def gameSchedule():
-    pass
+    gameSchedule = GameSchedule.query.all()
+    return render_template()
 
 #战队总界面(只需要查询数据，可以添加删除数据)
 @bp.route('/teams')
 def teams():
     teams = Team.query.all()
     return render_template('teams.html', current_user=current_user, teams=teams)
-
 
 #战队介绍界面(只需要查询数据)
 @bp.route('/team/<team_id>')
@@ -106,60 +105,19 @@ def player(player_id):
 
 
 #比赛数据(查询和修改删除数据)
-@bp.route('/games', methods=['GET', 'POST'])
+@bp.route('/games')
 def game():
-    if request.method == 'POST':
-        if current_user.is_authenticated and current_user.admin:
-            form = GameForm(request.form)
-            winner = form.winner.data
-            loser = form.loser.data
-            game_type = form.game_type.data
-            game_desc = form.game_desc.data
-            game_date = form.game_date.data
-            this_game = Game(winner=winner, loser=loser, game_type=game_type,
-                             game_desc=game_desc, game_date=game_date)
-            db.session.add(this_game)
-            db.session.commit()
     games = Game.query.all()
     return render_template('gamedata.html', current_user=current_user, games=games)
 
 #一场bo比赛的数据
-@bp.route('/agame/<game_id>', methods=['GET', 'POST'])
+@bp.route('/agame/<game_id>')
 def agame(game_id):
     game = Game.query.get(game_id)
     if game is None:
         return "不存在该比赛"
-    if request.method == 'POST':
-        if current_user.is_authenticated and current_user.admin:
-            form = AGameForm(request.form)
-            red_team = form.red_team.data
-            blue_team = form.blue_team.data
-            winner = form.winner.data
-            one_game = OneGame(winner, game)
-            red_top_hero = Hero.query.get(form.red_top_hero.data)
-            red_jungle_hero = Hero.query.get(form.red_jungle_hero.data)
-            red_mid_hero = Hero.query.get(form.red_mid_hero.data)
-            red_adc_hero = Hero.query.get(form.red_adc_hero.data)
-            red_support_hero = Hero.query.get(form.red_support_hero.data)
-            one_game.heroes.append(red_top_hero)
-            one_game.heroes.append(red_jungle_hero)
-            one_game.heroes.append(red_mid_hero)
-            one_game.heroes.append(red_adc_hero)
-            one_game.heroes.append(red_support_hero)
-            blue_top_hero = Hero.query.get(form.blue_top_hero.data)
-            blue_jungle_hero = Hero.query.get(form.blue_jungle_hero.data)
-            blue_mid_hero = Hero.query.get(form.blue_mid_hero.data)
-            blue_adc_hero = Hero.query.get(form.blue_adc_hero.data)
-            blue_support_hero = Hero.query.get(form.blue_support_hero.data)
-            one_game.heroes.append(blue_top_hero)
-            one_game.heroes.append(blue_jungle_hero)
-            one_game.heroes.append(blue_mid_hero)
-            one_game.heroes.append(blue_adc_hero)
-            one_game.heroes.append(blue_support_hero)
-            print("添加比赛成功")
     heroes = Hero.query.all()
     return render_template('agame.html', current_user=current_user, game=game, heroes=heroes)
-
 
 #个人中心
 @bp.route('/selfcenter/<user_id>', methods=['GET', 'POST'])
@@ -244,3 +202,5 @@ class SignupView(views.MethodView):
 
 bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 bp.add_url_rule('/signup/', view_func=SignupView.as_view('signup'))
+
+#cms views:

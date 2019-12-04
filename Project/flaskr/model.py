@@ -13,9 +13,11 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     register_time = db.Column(db.DateTime, default=datetime.now)
     admin = db.Column(db.Integer, default=0)
+    #bbs related
     article_num = db.Column(db.Integer, default=0)
     articles = db.relationship('Article', backref='author', cascade='delete')
     comments = db.relationship('Comment', backref='author', cascade='delete')
+    #selfcenter related
 
     def __init__(self, username, password, email):
         self.username = username
