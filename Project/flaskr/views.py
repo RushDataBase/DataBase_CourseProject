@@ -4,7 +4,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_paginate import Pagination, get_page_parameter
 from ext import login, db
 from .model import User, Board, Article, Comment, Player, Team, Game, OneGame, Hero, GameSchedule
-from .forms import LoginForm, SignupForm, PostForm, CommentForm, SelfCenterForm, AGameForm, GameForm
+from .forms import LoginForm, SignupForm, PostForm, CommentForm, SelfCenterForm, AGameForm, GameForm, TeamForm
 import config
 bp = Blueprint("front", __name__, )
 
@@ -245,7 +245,7 @@ def cms_article():
 
 @bp.route('/cms_comment')
 @login_required
-def cms_article():
+def cms_comment():
     delete_flag = request.args.get('delete', type=int, default=0)
     # 删除评论
     if delete_flag:
@@ -264,7 +264,7 @@ def cms_article():
 
 @bp.route('/cms_user')
 @login_required
-def cms_article():
+def cms_user():
     if not current_user.admin:
         return "您没有权限访问"
     delete_flag = request.args.get('delete', type=int, default=0)
@@ -275,12 +275,12 @@ def cms_article():
             user = User.query.get(delete_id)
             db.session.delete(user)
             db.session.commit()
-    users = User.query.all()
+    users = User.query.filter_by(admin=0)
     return render_template('cms_user.html', current_user=current_user, users=users)
 
-@bp.route('/cms_team', method=['GET', 'POST'])
+@bp.route('/cms_team', methods=['GET', 'POST'])
 @login_required
-def cms_article():
+def cms_team():
     if not current_user.admin:
         return "您没有权限访问"
     if request.method == 'POST':
