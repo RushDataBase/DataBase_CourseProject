@@ -1,88 +1,16 @@
-{% extends "base.html" %}
-{% block title %}
-    个人中心
-{% endblock %}
-
-{% block head %}
-
-    <style>
-        .helloTop {
-            background-image: url('{{ static('img/S9_1.jpg') }}');
-            -webkit-backdrop-filter: blur(10px);
-            height: 400px;
-            background-position: center bottom;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-            -webkit-background-size: cover;
-            -o-background-size: cover;
-            -moz-background-size: cover;
-            /*{#-ms-background-size: cover;#}*/
-        }
-    </style>
-
-
-{% endblock %}
-
-{% block content %}
-
-    <div class="jumbotron helloTop">
-        <div class="text-center">
-            {#    这里放user name    #}
-            <h1>Hello, xxx!</h1>
-            <p>...</p>
-            <br>
-            <br>
-        </div>
-        <div class="btn-group btn-group-lg text-center" role="group" aria-label="..." style="padding-top: 40px">
-            <button type="button" class="btn btn-primary"> Message <span class="badge">3</span></button>
-            <button type="button" class="btn btn-primary"> Articles</button>
-{#            <button type="button" class="btn btn-primary"> </button>#}
-        </div>
-    </div>
-
-    <div class="row col-md-8 col-md-offset-1">
+{% extends 'selfcenterbase.html' %}
+    {% block selfcenterbody %}
         <div class="row featurette col-md-11">
 
                 <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
                 <br>
                 <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
         </div>
+        {# 个人信息 #}
 
-
-        <div class="row featurette col-md-11">
-
-                <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-                <br>
-                <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-
-        </div>
-
-        <div class="row featurette col-md-11">
-
-                <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-                <br>
-                <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-
-        </div>
-    </div>
+    {% endblock %}
 
     {# 希望点击不同的右边显示不同的页面#}
-    <div class="col-sm-3" >
-        <ul class="list-group">
-            <li class="list-group-item active">个人信息</li>
-            <li class="list-group-item active">文章管理</li>
-            <li class="list-group-item active">评论管理</li>
-            {% if current_user.admin %}
-                <li class="list-group-item"><a href="#" class="text-primary">用户管理</a></li>
-                <li class="list-group-item"><a href="#" class="text-primary">战队管理</a></li>
-                <li class="list-group-item"><a href="#" class="text-primary">选手管理</a></li>
-                <li class="list-group-item"><a href="#" class="text-primary">赛程管理</a></li>
-                <li class="list-group-item"><a href="#" class="text-primary">比赛数据管理</a></li>
-            {% endif %}
-        </ul>
-    </div><!-- /.blog-sidebar -->
 
-{% endblock %}
 
 

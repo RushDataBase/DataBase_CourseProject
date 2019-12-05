@@ -5,20 +5,25 @@
 
 {% block content %}
     <div class="container" style="margin-top: 100px">
-        <div class="col-md-4" id="left block">
-                    <img src="{{ static(team.logo_addr) }}" class="img-circle">
-        </div>
-        <div class="col-md-6 col-md-offset-2">
-            {% for player in team.players %}
-                <div class="row">
-                    <div class="col-md-2"><p style="font-size: large">{{ player.position }}</p></div>
-                    <div class="col-xs-6, col-md-3">
-                        <a href="#" class="thumbnail">
-                            <img src="{{ static(player.img_addr) }}">
-                        </a>
+        <div class="row">
+            <div class="col-md-4" id="left block">
+                        <img src="{{ static(team.logo_addr) }}" class="img-circle">
+            </div>
+            <div class="col-md-6 col-md-offset-2">
+                {% for player in team.players %}
+                    <div class="row">
+                        <div class="col-md-2"><p style="font-size: large">{{ player.position }}</p></div>
+                        <div class="col-xs-6, col-md-3">
+                            <a href="#" class="thumbnail">
+                                <img src="{{ static(player.img_addr) }}">
+                            </a>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+
         </div>
 
     </div>

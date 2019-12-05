@@ -15,6 +15,7 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Integer, default=0)
     #bbs related
     article_num = db.Column(db.Integer, default=0)
+    comment_num = db.Column(db.Integer, default=0)
     articles = db.relationship('Article', backref='author', cascade='delete')
     comments = db.relationship('Comment', backref='author', cascade='delete')
     #selfcenter related
@@ -169,7 +170,7 @@ game_info = db.Table('game_info',
 class Game(db.Model):
     __tablename__ = 'game'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    game_type = db.Column(db.Enum('BO1', 'BO3', 'BO5'), nullable=False)
+    game_type = db.Column(db.String(64), nullable=False)
     game_desc = db.Column(db.String(128), nullable=False, unique=True)
     winner = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
     loser = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)

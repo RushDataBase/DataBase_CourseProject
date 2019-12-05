@@ -50,3 +50,13 @@ class AGameForm(Form):
     blue_adc_hero = StringField(validators=[InputRequired(message='请输入英雄')])
     blue_support_hero = StringField(validators=[InputRequired(message='请输入英雄')])
     game_date = DateField(validators=[InputRequired(message='请输入比赛日期')])
+
+
+class TeamForm(Form):
+    team_name = StringField(validators=[IntegerField(message='请输入队名')])
+    team_area = StringField(validators=[InputRequired(message='请输入队伍赛区')])
+    top_name = StringField(validators=[InputRequired(message='请输入上单选手')])
+    jungle_name = StringField(validators=[InputRequired(message='请输入上单选手')])
+    mid_name = StringField(validators=[InputRequired(message='请输入上单选手')])
+    adc_name = StringField(validators=[InputRequired(message='请输入上单选手')])
+    support_name = StringField(validators=[InputRequired(message='请输入上单选手')])

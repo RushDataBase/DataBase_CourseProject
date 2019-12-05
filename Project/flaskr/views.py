@@ -26,8 +26,10 @@ def discussion():
 
     if sort_type == 1:
         query_obj = query_obj.filter(board_id == 0 or Article.board_id == board_id).order_by(Article.register_time.desc())
+        print("sort 1")
     elif sort_type == 2:
         query_obj = query_obj.filter(board_id == 0 or Article.board_id == board_id).order_by(Article.comment_num.desc())
+        print("sort 2")
     else:
         query_obj = query_obj.filter(board_id == 0 or Article.board_id == board_id)
 
@@ -79,8 +81,12 @@ def article(article_id):
         if form.validate():
             content = form.content.data
             comment = Comment(content=content, article_id=article_id)
+            current_user.comment_num += 1
+            now_article.comment_num += 1
             comment.author = current_user
-            comment.article = article
+            comment.article = now_article
+            db.session.add(comment)
+            db.session.commit()
             print("评论成功")
             return render_template("article.html", article=now_article, comments=now_article.comments)
         else:
@@ -126,38 +132,12 @@ def player(player_id):
 #比赛数据(查询和修改删除数据)
 @bp.route('/games')
 def game():
+    posts = {}
     games = Game.query.all()
-    return render_template('gamedata.html', current_user=current_user, games=games)
+    for each_game in games:
+        pass
+    return render_template('gamedata.html', current_user=current_user, posts=posts)
 
-#一场bo比赛的数据
-@bp.route('/agame/<game_id>')
-def agame(game_id):
-    game = Game.query.get(game_id)
-    if game is None:
-        return "不存在该比赛"
-    heroes = Hero.query.all()
-    return render_template('agame.html', current_user=current_user, game=game, heroes=heroes)
-
-#个人中心
-@bp.route('/selfcenter/<user_id>', methods=['GET', 'POST'])
-@login_required
-def selfcenter(user_id):
-    if request.method == 'POST':
-        if current_user.id != user_id:
-            print("非法用户行为")
-            return "非法用户行为"
-        form = SelfCenterForm(request.form)
-        if form.validate():
-            personal_signature = form.personalized_signature.data
-            sexual = form.sexual.data
-            posts = {
-                personal_signature: personal_signature, sexual: sexual,
-            }
-            return render_template('selfcenter.html', current_user=current_user, posts=posts)
-        else:
-            print("非法输入")
-            return "非法输入"
-    return render_template('selfcenter.html', current_user=current_user)
 
 
 @login.user_loader
@@ -223,3 +203,96 @@ bp.add_url_rule('/login/', view_func=LoginView.as_view('login'))
 bp.add_url_rule('/signup/', view_func=SignupView.as_view('signup'))
 
 #cms views:
+#个人中心
+@bp.route('/selfcenter/<user_id>', methods=['GET', 'POST'])
+@login_required
+def selfcenter(user_id):
+    if request.method == 'POST':
+        if current_user.id != user_id:
+            print("非法用户行为")
+            return "非法用户行为"
+        form = SelfCenterForm(request.form)
+        if form.validate():
+            personal_signature = form.personalized_signature.data
+            sexual = form.sexual.data
+            posts = {
+                personal_signature: personal_signature, sexual: sexual,
+            }
+            return render_template('selfcenter.html', current_user=current_user, posts=posts)
+        else:
+            print("非法输入")
+            return "非法输入"
+    return render_template('selfcenter.html', current_user=current_user)
+
+@bp.route('/cms_article')
+@login_required
+def cms_article():
+    delete_flag = request.args.get('delete', type=int, default=0)
+    # 删除文章
+    if delete_flag:
+        delete_id = request.args.get('delete_id', type=int, default=0)
+        if delete_id:
+            article = Article.query.get(delete_id)
+            db.session.delete(article)
+            db.session.commit()
+    my_posts = Article.query.filter_by(author_id=current_user.id)
+    if current_user.admin:
+        all_posts = Article.query.all()
+        return render_template('cms_article.html', current_user=current_user, my_posts=my_posts, all_posts=all_posts)
+    else:
+        return render_template('cms_article.html', current_user=current_user, my_posts=my_posts)
+
+
+@bp.route('/cms_comment')
+@login_required
+def cms_article():
+    delete_flag = request.args.get('delete', type=int, default=0)
+    # 删除评论
+    if delete_flag:
+        delete_id = request.args.get('delete_id', type=int, default=0)
+        if delete_id:
+            comment = Comment.query.get(delete_id)
+            db.session.delete(comment)
+            db.session.commit()
+    my_comments = Comment.query.filter_by(author_id=current_user.id)
+    if current_user.admin:
+        all_comments = Comment.query.all()
+        return render_template('cms_comment.html', current_user=current_user,
+                               my_comments=my_comments, all_comments=all_comments)
+    else:
+        return render_template('cms_comment.html', current_user=current_user, my_comments=my_comments)
+
+@bp.route('/cms_user')
+@login_required
+def cms_article():
+    if not current_user.admin:
+        return "您没有权限访问"
+    delete_flag = request.args.get('delete', type=int, default=0)
+    # 删除用户
+    if delete_flag:
+        delete_id = request.args.get('delete_id', type=int, default=0)
+        if delete_id:
+            user = User.query.get(delete_id)
+            db.session.delete(user)
+            db.session.commit()
+    users = User.query.all()
+    return render_template('cms_user.html', current_user=current_user, users=users)
+
+@bp.route('/cms_team', method=['GET', 'POST'])
+@login_required
+def cms_article():
+    if not current_user.admin:
+        return "您没有权限访问"
+    if request.method == 'POST':
+        form = TeamForm(request.form)
+    else:
+        delete_flag = request.args.get('delete', type=int, default=0)
+        # 删除战队
+        if delete_flag:
+            delete_id = request.args.get('delete_id', type=int, default=0)
+            if delete_id:
+                team = Team.query.get(delete_id)
+                db.session.delete(team)
+                db.session.commit()
+    teams = Team.query.all()
+    return render_template('cms_user.html', current_user=current_user, teams=teams)

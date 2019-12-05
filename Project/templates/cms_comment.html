@@ -1,0 +1,12 @@
+{% extends 'selfcenterbase.html' %}
+{% block selfcenterbody %}
+    {% for comment in my_comments %}
+    {% endfor %}
+    {# 如果是管理员，则多一个所有评论的管理 #}
+    {% if current_user.admin %}
+
+        {% for comment in all_comments %}
+        {% endfor %}
+    
+    {% endif %}
+{% endblock %}

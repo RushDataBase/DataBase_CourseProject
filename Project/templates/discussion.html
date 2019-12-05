@@ -149,11 +149,18 @@
                                 <option value="3">One Month</option>
                                 <option value="4">One Year</option>
                             </select>
-                                Order:
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Order</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ url_for('front.discussion',sort=1) }}">最新发表</a></li>
+                                    <li><a href="{{ url_for('front.discussion',sort=2) }}">评论最多</a></li>
+                                </ul>
+                            </li>
+                            {#
                             <select id="orderby" name="orderby">
-                                <option selected value="0"><a href="{{ url_for('front.discussion',sort=1) }}">最新发表</a></option>
-                                <option value="1"><a href="{{ url_for('front.discussion',sort=2) }}">评论最多</a></option>
-                            </select>
+                                <option selected value="0" href="{{ url_for('front.discussion',sort=1) }}">最新发表</option>
+                                <option value="1" href="{{ url_for('front.discussion',sort=2)}}">评论最多</option>
+                            </select>#}
                             {#
                             {#                            <select id="desc" name="desc">
                             {#                                <option selected value="0">Desc</option>

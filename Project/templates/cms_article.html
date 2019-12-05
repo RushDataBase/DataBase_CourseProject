@@ -1,0 +1,12 @@
+{% extends 'selfcenterbase.html' %}
+{% block selfcenterbody %}
+    {% for post in my_posts %}
+    {% endfor %}
+    {# 如果是管理员，则多一个所有帖子的管理 #}
+    {% if current_user.admin %}
+
+        {% for post in all_posts %}
+        {% endfor %}
+
+    {% endif %}
+{% endblock %}
