@@ -3,10 +3,66 @@
 
 
     {# 所有game的信息 做一个固定大小面板 #}
-    {% for game in games %}
 
-    {# 设置一个delete按钮 #}
-    {% endfor %}
+    <form method="post">
+        <select name="game_id" class="form-control">
+            {% for game in games %}
+                <option value="{{ game.id }}">{{ game.game_desc }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="delete" value="1">删除</button>
+    </form>
+    {# 添加大比赛 #}
+    <form method="post">
+
+
+        <label>比赛日期<input type="text" id="inputTitle" class="form-control" placeholder="比赛日期" name="date" required autofocus>
+        </label>
+        <label>比赛描述
+        <input type="text" id="inputTitle" class="form-control" placeholder="比赛描述" name="desc" required autofocus></label>
+
+        <button type="submit" name="submit1" value="1">添加一场比赛</button>
+    </form>
+
+    {# 添加小比赛 #}
+    <form method="post">
+        <select name="main_game" class="form-control">
+            {% for game in games %}
+                <option value="{{ game.id }}">{{ game.game_desc }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" id="inputTitle" class="form-control" placeholder="场次" name="index" required autofocus>
+        <label>红方战队</label>
+        <select name="team1_id" class="form-control">
+            {% for team in teams %}
+                <option value="{{ team.id }}">{{ team.team_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" id="inputTitle" class="form-control" placeholder="红方击杀" name="red_kill" required autofocus>
+        <label>兰芳战队</label>
+        <select name="team2_id" class="form-control">
+            {% for team in teams %}
+                <option value="{{ team.id }}">{{ team.team_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" id="inputTitle" class="form-control" placeholder="蓝方击杀" name="blue_kill" required autofocus>
+        <input type="number" id="inputTitle" class="form-control" placeholder="比赛时长" name="game_time" required autofocus>
+
+        <label>胜者</label>
+        <select name="winner" class="form-control">
+             <option value="1">红方</option>
+             <option value="2">蓝方</option>
+        </select>
+
+
+        <label>mvp</label>
+        <select name="mvp" class="form-control">
+            {% for player in players %}
+                <option value="{{ player.id }}">{{ player.game_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="submit2" value="1">添加一局比赛</button>
+    </form>
 
     {# 添加队伍的信息 #}
     {# 是一个form #}

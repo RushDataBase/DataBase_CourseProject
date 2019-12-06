@@ -5,4 +5,72 @@
 
         {# 设置一个delete按钮 #}
     {% endfor %}
+
+    <div class="col-md-12" >
+        <div class="panel panel-default">
+            <div class="panel-heading nav navbar-static-top" style="font-size:12px;">
+                <div class="row">
+                    <!--id-->
+                    <div class="col-md-1 hidden-xs text-center">
+                        id
+                    </div>
+                    <!--name-->
+                    <div class="col-md-2 hidden-xs text-center">
+                        name
+                    </div>
+                    <!--email-->
+                    <div class="col-md-2 hidden-xs text-center">
+                        email
+                    </div>
+                    <!--article_num-->
+                    <div class="col-md-2 hidden-xs text-center">
+                        article num
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-2 hidden-xs text-center">
+                        comment num
+                    </div>
+                    <!--register_num-->
+                    <div class="col-md-2 hidden-xs text-center">
+                        register time
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body pre-scrollable" style="border-bottom:1px solid #eee; height: 900px;">
+            {% for user in users %}
+                <div class="row">
+                    <!--id-->
+                    <div class="col-md-1 hidden-xs text-center" style="padding-top:5px;">
+                        <span>{{user.id}}</span>
+                    </div>
+                    <!--name-->
+                    <div class="col-md-2 hidden-xs text-center" style="padding-top:5px;">
+                        <span>{{user.username}}</span>
+                    </div>
+                    <!--email-->
+                    <div class="col-md-2 hidden-xs text-center" style="padding-top:5px;">
+                        <span>{{user.email}}</span>
+                    </div>
+                    <!--article_num-->
+                    <div class="col-md-2 hidden-xs text-center" style="padding-top:5px;">
+                        <span>{{user.article_num}}</span>
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-2 hidden-xs text-center" style="padding-top:5px;">
+                        <span>{{user.comment_num}}</span>
+                    </div>
+                    <!--register_num-->
+                    <div class="col-md-2 hidden-xs text-center" style="padding-top:5px; padding-right: 5px">
+                        <span>{{user.register_time}}</span>
+                    </div>
+                    <div class="col-md-1 hidden-xs" style="padding-top:1px;">
+                        <button class="btn btn-info btn-xs" onclick="location.href='{{ url_for('front.cms_user',delete=1,delete_id=user.id) }}'">删除</button>
+                    </div>
+                </div>
+            {% endfor %}
+            </div> <!--pannel body-->
+        </div> <!--pannel-->
+    </div> <!--col-md-12 讨论区帖子表格-->
+
+
 {% endblock %}

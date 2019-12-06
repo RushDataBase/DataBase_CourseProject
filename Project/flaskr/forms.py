@@ -1,6 +1,7 @@
-from wtforms import Form, StringField, IntegerField, DateField
+from wtforms import Form, StringField, IntegerField, DateField, FileField, SubmitField
 from wtforms.validators import Email, InputRequired, Length, Regexp, EqualTo
 from flask_ckeditor import CKEditorField
+from flask_wtf.file import FileRequired, FileAllowed
 
 class LoginForm(Form):
     email = StringField(validators=[Email(message='请输入正确的邮箱'), InputRequired(message='请输入邮箱')])
@@ -25,31 +26,10 @@ class CommentForm(Form):
     content = CKEditorField(validators=[InputRequired(message='请输入内容')])
 
 class SelfCenterForm(Form):
-    personalized_signature = StringField()
-    sexual = IntegerField()
-
-class GameForm(Form):
-    winner = IntegerField(validators=[InputRequired(message='请输入队伍')])
-    loser = IntegerField(validators=[InputRequired(message='请输入队伍')])
-    game_type = StringField(validators=[InputRequired(message='请选择比赛类型')])
-    game_desc = StringField(validators=[InputRequired(message='比赛说明')])
-    game_date = DateField(validators=[InputRequired(message='比赛日期')])
-
-class AGameForm(Form):
-    red_team = IntegerField(validators=[InputRequired(message='请输入红队')])
-    blue_team = IntegerField(validators=[InputRequired(message='请输入蓝队')])
-    winner = IntegerField(validators=[IntegerField('请选择胜利队伍')])
-    red_top_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    red_jungle_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    red_mid_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    red_adc_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    red_support_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    blue_top_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    blue_jungle_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    blue_mid_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    blue_adc_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    blue_support_hero = StringField(validators=[InputRequired(message='请输入英雄')])
-    game_date = DateField(validators=[InputRequired(message='请输入比赛日期')])
+    personalized_signature = StringField(validators=[InputRequired(message='请签个名吧')])
+    username = StringField(validators=[InputRequired(message='请输入用户名')])
+    email = StringField(validators=[Email(message='请输入邮箱')])
+    head_img = FileField(validators=[FileAllowed(['jpg','png','gif'])])
 
 
 class TeamForm(Form):
@@ -60,3 +40,27 @@ class TeamForm(Form):
     mid_name = StringField(validators=[InputRequired(message='请输入上单选手')])
     adc_name = StringField(validators=[InputRequired(message='请输入上单选手')])
     support_name = StringField(validators=[InputRequired(message='请输入上单选手')])
+
+
+#cms game
+
+class DeleteGameForm(Form):
+    game = IntegerField(validators=[InputRequired(message='请选择比赛')])
+    delete = SubmitField()
+
+
+class GameForm(Form):
+    game_date = DateField('date', validators=[InputRequired(message='比赛日期')])
+    game_desc = StringField('desc', validators=[InputRequired(message='比赛说明')])
+    addGame = SubmitField('submit1')
+
+class AGameForm(Form):
+    main_game = IntegerField(validators=[InputRequired()])
+    index = IntegerField(validators=[InputRequired()])
+    red_team = IntegerField(validators=[InputRequired(message='请输入红队')])
+    red_kill = IntegerField(validators=[InputRequired()])
+    blue_team = IntegerField(validators=[InputRequired(message='请输入蓝队')])
+    blue_kill = IntegerField(validators=[InputRequired()])
+    game_time = IntegerField(validators=[InputRequired()])
+    mvp = IntegerField(validators=[InputRequired()])
+    addOneGame = SubmitField()

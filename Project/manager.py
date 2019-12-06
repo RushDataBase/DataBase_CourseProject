@@ -18,9 +18,10 @@ manager.add_command('db', MigrateCommand)
 @manager.option('-p', '--password', dest='password')
 @manager.option('-e', '--email', dest='email')
 def create_cms_user(username, password, email):
-    user = model.User(username=username, password=password, email=email)
-    db.session.add(user)
-    db.session.commit()
+    for i in range(100):
+        user = model.User(username=str(i), password='123456', email=str(i) + 'gfff@qq.com')
+        db.session.add(user)
+        db.session.commit()
     print("cms add user successfully")
 
 @manager.option('-i', '--id', dest='id')

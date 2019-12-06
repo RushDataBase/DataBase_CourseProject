@@ -3,11 +3,13 @@ from flask import render_template, views, request, url_for, redirect
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_paginate import Pagination, get_page_parameter
 from ext import login, db
-from .model import User, Board, Article, Comment, Player, Team, Game, OneGame, Hero, GameSchedule
-from .forms import LoginForm, SignupForm, PostForm, CommentForm, SelfCenterForm, AGameForm, GameForm, TeamForm
+from .model import User, Board, Article, Comment, Player, Team, Game, OneGame, game_info
+from .forms import LoginForm, SignupForm, PostForm, CommentForm, SelfCenterForm, AGameForm, GameForm, TeamForm, DeleteGameForm
 import config
+import os
+from werkzeug.datastructures import CombinedMultiDict
+from werkzeug.utils import secure_filename
 bp = Blueprint("front", __name__, )
-
 
 @bp.route('/')
 def index():
@@ -73,7 +75,7 @@ def article(article_id):
     if article is None:
         return "该文章不存在"
     if request.method == 'GET':
-        return render_template("article.html", article=now_article)
+        return render_template("article.html", article=now_article,  comments=now_article.comments)
     else:
         if not current_user.is_authenticated:
             return redirect(url_for('front.login'))
@@ -93,11 +95,6 @@ def article(article_id):
             print("评论失败")
             return redirect(url_for('front.article', article_id=article_id))
 
-#赛程(只需要查询数据)
-@bp.route('/gameSchedule')
-def gameSchedule():
-    gameSchedule = GameSchedule.query.all()
-    return render_template()
 
 #战队总界面(只需要查询数据，可以添加删除数据)
 @bp.route('/teams')
@@ -133,10 +130,39 @@ def player(player_id):
 @bp.route('/games')
 def game():
     posts = {}
-    games = Game.query.all()
-    for each_game in games:
-        pass
-    return render_template('gamedata.html', current_user=current_user, posts=posts)
+    db_games = Game.query.all()
+    games = []
+    for each_game in db_games:
+        a_game = {}
+        a_game['entity'] = each_game
+        a_game['date'] = each_game.game_date
+        team1 = Team.query.get(each_game.games[0].red_team_id)
+        team2 = Team.query.get(each_game.games[0].blue_team_id)
+        point = {}
+        point[team1] = 0
+        point[team2] = 0
+        sm_games = []
+        for sm_game in each_game.games:
+            a_sm_game = {}
+            winner = Team.query.get(sm_game.winner_id)
+            point[winner] += 1
+            red_team = Team.query.get(sm_game.red_team_id)
+            blue_team = Team.query.get(sm_game.blue_team_id)
+            winner = Team.query.get(sm_game.winner_id)
+            a_sm_game['red_team'] = red_team
+            a_sm_game['blue_team'] = blue_team
+            a_sm_game['winner'] = winner
+            a_sm_game['entity'] = sm_game
+            sm_games.append(a_sm_game)
+        a_game['team1'] = team1
+        a_game['team2'] = team2
+        a_game['score'] = str(point[team1]) + ":" + str(point[team2])
+        a_game['desc'] = each_game.game_desc
+        a_game['sm_games'] = sm_games
+        games.append(a_game)
+    print(games)
+
+    return render_template('gamedata.html', current_user=current_user, games=games)
 
 
 
@@ -207,20 +233,34 @@ bp.add_url_rule('/signup/', view_func=SignupView.as_view('signup'))
 @bp.route('/selfcenter/<user_id>', methods=['GET', 'POST'])
 @login_required
 def selfcenter(user_id):
+
     if request.method == 'POST':
-        if current_user.id != user_id:
+        if current_user.id != int(user_id):
+            print(current_user.id)
+            print(user_id)
+            print(current_user.id != user_id)
             print("非法用户行为")
             return "非法用户行为"
         form = SelfCenterForm(request.form)
         if form.validate():
             personal_signature = form.personalized_signature.data
-            sexual = form.sexual.data
-            posts = {
-                personal_signature: personal_signature, sexual: sexual,
-            }
-            return render_template('selfcenter.html', current_user=current_user, posts=posts)
+            name = form.username.data
+            email = form.email.data
+            avatar = request.files.get('header')
+            filename = secure_filename(avatar.filename)
+            filename = str(current_user.id) + "_" + filename
+            print(filename)
+            avatar.save(os.path.join(config.HEADER_UPLOAD_PATH, filename))
+            img_addr = 'img/headers/' + str(filename)
+            current_user.header_addr = img_addr
+            current_user.personal_signature = personal_signature
+            current_user.username = name
+            current_user.email = email
+            db.session.commit()
+            return render_template('selfcenter.html', current_user=current_user)
         else:
             print("非法输入")
+            print(form.errors)
             return "非法输入"
     return render_template('selfcenter.html', current_user=current_user)
 
@@ -233,6 +273,8 @@ def cms_article():
         delete_id = request.args.get('delete_id', type=int, default=0)
         if delete_id:
             article = Article.query.get(delete_id)
+            article.board.article_num -= 1
+            article.author.article_num -= 1
             db.session.delete(article)
             db.session.commit()
     my_posts = Article.query.filter_by(author_id=current_user.id)
@@ -252,6 +294,8 @@ def cms_comment():
         delete_id = request.args.get('delete_id', type=int, default=0)
         if delete_id:
             comment = Comment.query.get(delete_id)
+            comment.author.comment_num -= 1
+            comment.article.comment_num -= 1
             db.session.delete(comment)
             db.session.commit()
     my_comments = Comment.query.filter_by(author_id=current_user.id)
@@ -273,6 +317,11 @@ def cms_user():
         delete_id = request.args.get('delete_id', type=int, default=0)
         if delete_id:
             user = User.query.get(delete_id)
+            for article in user.articles:
+                article.board.article_num -= 1
+            for comment in user.comments:
+                comment.article.comment_num -= 1
+
             db.session.delete(user)
             db.session.commit()
     users = User.query.filter_by(admin=0)
@@ -295,4 +344,65 @@ def cms_team():
                 db.session.delete(team)
                 db.session.commit()
     teams = Team.query.all()
-    return render_template('cms_user.html', current_user=current_user, teams=teams)
+    return render_template('cms_team.html', current_user=current_user, teams=teams)
+
+@bp.route('/cms_game', methods=['GET', 'POST'])
+@login_required
+def cms_game():
+    if not current_user.admin:
+        return "您没有权限访问"
+    if request.method == 'POST':
+        print(request.form)
+        deleteForm = DeleteGameForm(request.form)
+        delete_flag = request.form.get('delete')
+        print(deleteForm)
+        gameForm = GameForm(request.form)
+        game_flag1 = request.form.get('submit1')
+        print(gameForm)
+        agameForm = AGameForm(request.form)
+        game_flag2 = request.form.get('submit2')
+        if delete_flag:
+            game = Game.query.get(request.form.get('game_id'))
+            print('删除比赛成功')
+            db.session.delete(game)
+            db.session.commit()
+
+        elif game_flag1:
+            date = request.form.get('date')
+            desc = request.form.get('desc')
+            if date is None or desc is None:
+                return "输入错误"
+            game = Game(game_desc=desc, game_date=date)
+            print('添加一场比赛成功')
+            db.session.add(game)
+            db.session.commit()
+
+        elif game_flag2:
+            main_game = Game.query.get(request.form.get('main_game'))
+            red_team = request.form.get('team1_id')
+            blue_team = request.form.get('team2_id')
+            mvp = Player.query.get(request.form.get('mvp'))
+            red_kill = request.form.get('red_kill')
+            blue_kill = request.form.get('blue_kill')
+            winner_index = request.form.get('winner')
+            winner = red_team
+            if winner_index == 2:
+                winner = blue_team
+            index = request.form.get('index')
+            time = request.form.get('game_time')
+            one_game = OneGame(index=index, time=time, red_kill=red_kill, blue_kill=blue_kill, red_team_id=red_team,
+                               blue_team_id=blue_team, winner_id=winner)
+            print(type(red_team))
+            one_game.red_team = red_team
+            one_game.blue_team = blue_team
+            one_game.winner = winner
+            one_game.game = main_game
+            one_game.mvp_player = mvp
+            print('添加一局比赛成功')
+            db.session.add(one_game)
+            db.session.commit()
+
+    games = Game.query.all()
+    teams = Team.query.all()
+    players = Player.query.all()
+    return render_template('cms_game.html', current_user=current_user, games=games, teams=teams, players=players)

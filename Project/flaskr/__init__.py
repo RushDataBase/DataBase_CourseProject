@@ -1,2 +1,2 @@
-from .model import User, Article, Game, Team, Hero, Player
+from .model import User, Article, Game, Team, Player
 from .views import bp

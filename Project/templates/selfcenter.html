@@ -1,12 +1,66 @@
 {% extends 'selfcenterbase.html' %}
     {% block selfcenterbody %}
-        <div class="row featurette col-md-11">
+        <div class="container">
+            <form action="" method="post" enctype="multipart/form-data">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>头像</td>
+                            <td><input type="file" name="header"></td>
+                        </tr>
+                        <tr>
+                            <td>个性签名</td>
+                            <td><input type="text" name="personalized_signature"></td>
+                        </tr>
+                        <tr>
+                            <td>用户名</td>
+                            <td><input type="text" name="username"></td>
+                        </tr>
+                        <tr>
+                            <td>邮箱</td>
+                            <td><input type="text" name="email"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">修改</button>
 
-                <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-                <br>
-                <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+
+
+            </form>
         </div>
         {# 个人信息 #}
+
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+            修改密码
+        </button>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">修改密码</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <form class="form-signin" method="post">
+                            <label for="inputOldPassword" class="sr-only">旧密码</label>
+                            <input type="password" id="inputOldPassword" class="form-control" placeholder="密码" name="password1" required>
+                            <label for="inputPassword" class="sr-only">新密码</label>
+                            <input type="password" id="inputPassword" class="form-control" placeholder="密码" name="password1" required>
+                            <label for="again" class="sr-only">验证</label>
+                            <input type="password" id="again" class="form-control" placeholder="再次输入密码" name="password2" required>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
     {% endblock %}
 

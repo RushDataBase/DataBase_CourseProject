@@ -5,49 +5,147 @@
 
 {% block head %}
     <style>
-        #workShop {
-            margin-top: 150px;
+        body {
+            background-image: url('{{ static('img/S9_1.jpg') }}');
+            background-position: center 0;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            -moz-background-size: cover;
+            -ms-background-size: cover;
         }
+
+        .row {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .row > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .myCenter {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .myVerticalBottom {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .myContent {
+            font-size: 20px;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .myUserBlock {
+            background-color: #fafbfc;
+            border: 2px solid #ccc;
+        }
+
+        .myContentBlock {
+            border: 2px solid #ccc;
+            border-right: 0px;
+            border-left: 0px;
+            background-color: white
+        }
+
+        .myTimeBlock {
+            border: 2px solid #ccc;
+            border-left: 0px;
+            background-color: white
+        }
+
+
     </style>
     <script src="{{ static('ckeditor/ckeditor.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-    <div id="workShop" class="container">
-        <div>
-            <p>{{ article.title }}</p>
+
+    <!--标题-->
+    <div class="row" style="margin-top: 100px; height: 100px">
+        <div class="col-md-10 col-md-offset-1 myCenter" style="border: 2px solid #ccc; background-color: #eee">
+            <h1>{{ article.title }}</h1>
+        </div>
+    </div>
+
+    <!--版主-->
+    <div class="row">
+        <!--左栏用户-->
+        <div class="col-md-2 col-md-offset-1 myUserBlock">
+            <!--user img-->
+            <a href="#" style="margin-top: 10px">
+                <img class="thumbnail center-block" src="{{ static(article.author.header_addr) }}" alt="user_head_img" style="width: 150px; height: 150px;">
+            </a>
+            <span class="text-center" style="font-size: 24px; margin-bottom: 20px">{{ article.author.username }}</span>
         </div>
 
-        <div class="list_con">
-            <p>{{ article.author.username }}</p>
+        <!--右栏内容-->
+        <div class="col-md-6 myContentBlock">
+                <div class="myContent">
+                    {{ article.content | safe }}
+                </div>
         </div>
-        <div>
-            {{ article.content | safe }}
+
+        <!--时间-->
+        <div class="col-md-2 myVerticalBottom myTimeBlock">
+            <span class="text-muted" style="margin-bottom: 10px">{{article.register_time}}</span>
         </div>
+
     </div>
-    <div name="comments" class="container">
+
+    <!--评论-->
+    <div class="row">
         {% for comment in comments %}
-            <div>
-                <p> {{ comment.content |safe }}</p>
+            <!--左栏用户-->
+            <div class="col-md-2 col-md-offset-1 myUserBlock">
+                <!--user img-->
+                <a href="#" style="margin-top: 10px">
+                    <img class="thumbnail center-block" src="{{ static(article.author.header_addr) }}" alt="user_head_img" style="width: 150px; height: 150px;">
+                </a>
+                <span class="text-center" style="font-size: 24px; margin-bottom: 20px">{{ comment.author.username }}</span>
             </div>
-            <div>
-                <p> {{ comment.author.username}}</p>
+            <!--右栏内容-->
+            <div class="col-md-6 myContentBlock">
+                <div class="myContent">
+                    {{ comment.content | safe }}
+                </div>
             </div>
-            <div>
-                <p> {{ comment.register_time }}</p>
+
+            <!--时间-->
+            <div class="col-md-2 myVerticalBottom myTimeBlock">
+                <span class="text-muted" style="margin-bottom: 10px">{{comment.register_time}}</span>
             </div>
         {% endfor %}
-        <div class="container">
-            <form method="post">
-                <div class="form-group">
-                    <textarea name="content" id="editor1">
-                    来发表你的评论吧
-                    </textarea>
-                    <script>CKEDITOR.replace('editor1')</script>
-                </div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">发表评论</button>
-            </form>
+    </div>
+
+    <div name="comments" class="row" >
+        <div class="col-md-10 col-md-offset-1" style="border: 2px solid #eee; margin-top: 20px; margin-bottom: 50px; background-color: #fafbfc; ">
+            <div class="col-md-10 col-md-offset-1" style="margin-top: 50px; margin-bottom: 50px">
+                <form method="post">
+                    <div class="form-group">
+                        <textarea name="content" id="editor1">
+                        来发表你的评论吧
+                        </textarea>
+                        <script>CKEDITOR.replace('editor1')</script>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">发表评论</button>
+                </form>
+            </div>
         </div>
     </div>
+
+
 
 {% endblock %}

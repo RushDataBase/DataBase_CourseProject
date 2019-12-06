@@ -5,6 +5,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import event
 
 
+game_info = db.Table('game_info',
+                    db.Column('game_id', db.Integer, db.ForeignKey('one_game.id'), primary_key=True),
+                    db.Column('team_id', db.Integer, db.ForeignKey('team.id'), primary_key=True),
+)
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -12,6 +18,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True)
     password_hash = db.Column(db.String(128))
     register_time = db.Column(db.DateTime, default=datetime.now)
+    personal_signature = db.Column(db.String(128), default="这个召唤师很懒，什么都没有留下")
+    header_addr = db.Column(db.String(128), default='img/headers/default.png')
+
     admin = db.Column(db.Integer, default=0)
     #bbs related
     article_num = db.Column(db.Integer, default=0)
@@ -81,6 +90,7 @@ class Comment(db.Model):
     content = db.Column(db.String(256), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     article_id = db.Column(db.Integer, db.ForeignKey('article.id'))
+    register_time = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, content, article_id):
         self.content = content
@@ -97,6 +107,10 @@ class Team(db.Model):
     lost_num = db.Column(db.Integer, default=0)
     s9_rank = db.Column(db.String(128))
     players = db.relationship('Player', backref='team', cascade='delete')
+    '''
+    red_games = db.relationship('OneGame', secondary=game_info, backref='red_team')
+    blue_games = db.relationship('OneGame', secondary=game_info, backref='blue_team')
+    win_games = db.relationship('OneGame', secondary=game_info, backref='winner')'''
 
     def __init__(self, team_name, team_area):
         self.team_name = team_name
@@ -140,17 +154,15 @@ class Player(db.Model):
         self.img_addr = img_addr
 
 
-class Hero(db.Model):
+'''class Hero(db.Model):
     __tablename__ = 'hero'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), unique=True)
     pick_times = db.Column(db.Integer)
     win_times = db.Column(db.Integer)
-    img_addr = db.Column(db.String(128), unique=True)
 
-    def __init__(self, name, img_addr):
+    def __init__(self, name):
         self.name = name
-        self.img_addr = img_addr
 
     def add_pick_times(self):
         self.pick_times += 1
@@ -159,49 +171,50 @@ class Hero(db.Model):
         self.win_times += 1
 
     def get_win_rate(self):
-        return self.win_times/self.pick_times
+        return self.win_times/self.pick_times'''
 
 
-game_info = db.Table('game_info',
-                    db.Column('game_id', db.Integer, db.ForeignKey('one_game.id'), primary_key=True),
-                    db.Column('hero_id', db.Integer, db.ForeignKey('hero.id'), primary_key=True),
-)
 
 class Game(db.Model):
     __tablename__ = 'game'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    game_type = db.Column(db.String(64), nullable=False)
     game_desc = db.Column(db.String(128), nullable=False, unique=True)
-    winner = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
-    loser = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    games = db.relationship('OneGame', backref='game', cascade='delete')
     game_date = db.Column(db.Date, nullable=False)
-    #MVP = db.Column(db.Integer, default=None)
 
-    def __init__(self, winner, loser, game_type, game_desc, game_date ):
-        self.game_type = game_type
+    def __init__(self, game_desc, game_date ):
         self.game_date = game_date
         self.game_desc = game_desc
-        self.winner = winner
-        self.loser = loser
-
 
 class OneGame(db.Model):
     __tablename__ = 'one_game'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    belong = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
-    red_team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
-    blue_team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
-    game = db.relationship('Game', backref=db.backref('one_games'))
-    heroes = db.relationship('Hero', secondary=game_info, backref=db.backref('games'))
-    winner = db.Column(db.Integer)
-    loser = db.Column(db.Integer)
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
+    index = db.Column(db.Integer)
+
+    red_team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    blue_team_id = db.Column(db.Integer,)
+    winner_id = db.Column(db.Integer)
+    red_kill = db.Column(db.Integer, default=0)
+    blue_kill = db.Column(db.Integer, default=0)
+
+
+
+    mvp = db.Column(db.Integer, db.ForeignKey('player.id'))
+    mvp_player = db.relationship('Player', backref=db.backref('mvp_games'))
+    game_time = db.Column(db.Integer, default=0)
     #MVP = db.Column(db.Integer, default=None)
-    def __init__(self, winner, game, red_team_id, blue_team_id):
-        self.game = game
-        self.winner = winner
+    def __init__(self, index, time, red_kill, blue_kill,
+                 red_team_id, blue_team_id, winner_id):
+        self.index = index
+        self.game_time = time
+        self.red_kill = red_kill
+        self.blue_kill = blue_kill
         self.red_team_id = red_team_id
         self.blue_team_id = blue_team_id
+        self.winner_id = winner_id
 
+'''
 class GameSchedule(db.Model):
     __tablename__ = 'gameschedule'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -217,6 +230,5 @@ class GameSchedule(db.Model):
         self.date = date
 
     def set_desc(self, desc):
-        self.desc = desc
-
+        self.desc = desc'''
 

@@ -1,12 +1,47 @@
 {% extends 'selfcenterbase.html' %}
 {% block selfcenterbody %}
-    {% for comment in my_comments %}
-    {% endfor %}
-    {# 如果是管理员，则多一个所有评论的管理 #}
-    {% if current_user.admin %}
-
-        {% for comment in all_comments %}
-        {% endfor %}
-    
-    {% endif %}
+    {# 如果是管理员，则多一个所有帖子的管理 #}
+        <!--{% for post in all_posts %}-->
+        <!--{% endfor %}-->
+    <div class="col-md-12" >
+        <div class="panel panel-default">
+            <div class="panel-heading nav navbar-static-top" style="font-size:12px;">
+                <div class="row">
+                    <!--title-->
+                    <div class="col-md-3 hidden-xs text-center">
+                        作者
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-3 hidden-xs text-center">
+                        所属文章
+                    </div>
+                    <!--board-->
+                    <div class="col-md-3 hidden-xs text-center">
+                        发表时间
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body pre-scrollable" style="border-bottom:1px solid #eee; height: 900px;">
+            {% for comment in my_comments %}
+                <div class="row" style="border-bottom: 1px solid #eee">
+                    <!--author-->
+                    <div class="col-md-3 hidden-xs text-center" style="padding-top:5px;">
+                        <span>{{comment.author.username}}</span>
+                    </div>
+                    <!--article-->
+                    <div class="col-md-3 hidden-xs text-center" style="padding-top:5px;">
+                        <a href="{{url_for('front.article',article_id=comment.posts.id)}}" >{{ comment.posts.title }}</a>
+                    </div>
+                    <!--register_time-->
+                    <div class="col-md-3 hidden-xs text-center" style="padding-top:5px;">
+                        <span>2019-12-05 19:00:38</span>
+                    </div>
+                    <div class="col-md-2 hidden-sm myCenter myBlockTerm" >
+                        <button class="btn btn-info btn-sm" onclick="location.href='{{ url_for('front.cms_comment',delete=1,delete_id=comment.id) }}'" >删除</button>
+                    </div>
+                </div>
+            {% endfor %}
+            </div> <!--pannel body-->
+        </div> <!--pannel-->
+    </div> <!--col-md-12 讨论区帖子表格-->
 {% endblock %}

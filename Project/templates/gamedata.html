@@ -1,4 +1,154 @@
 {% extends 'base.html' %}
+
 {% block title %}
-    比赛数据
+S9世界赛参赛战队
+{% endblock %}
+
+{% block head %}
+
+    <style>
+        .myCenter {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .myTermBlock {
+            height: 50px;
+        }
+    </style>
+
+
+{% endblock %}
+
+{% block content %}
+    <div class="col-md-10 col-md-offset-1" style="margin-top: 150px">
+        <div class="panel panel-default">
+            <div class="panel-heading nav navbar-static-top">
+                <div class="row" style="margin-right: 0px">
+                    <!--title-->
+                    <div class="col-md-2 hidden-xs myCenter">
+                        赛事阶段
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-6 hidden-xs myCenter">
+
+                        对阵情况
+                    </div>
+                    <div class="col-md-3 hidden-xs myCenter">
+                        比赛时间
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body pre-scrollable table-hover" style="border-bottom:1px solid #eee; height: 800px">
+                {% for game in games %}
+
+
+                <div class="row" style="border-bottom: 1px solid #eee">
+                    <div class="col-md-2 hidden-xs myCenter myTermBlock">
+                        {{ game['desc'] }}
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-6 hidden-xs">
+                        <!--左队徽-->
+                        <div class="col-md-2 hidden-xs myCenter myTermBlock">
+                            <img src="{{ static(game['team1'].logo_addr) }}" class="img-circle" style="width: 50px; height: 50px; margin: 0 auto">
+                        </div>
+                        <!--左队名-->
+                        <div class="col-md-2 hidden-xs myCenter myTermBlock">
+                            {{ game['team1'].team_name }}
+                        </div>
+                        <!--对阵情况-->
+                        <div class="col-md-4 hidden-xs myCenter myTermBlock">
+                                {{ game['score'] }}
+                        </div>
+                        <!--右队名-->
+                        <div class="col-md-2 hidden-xs myCenter myTermBlock">
+                            {{ game['team2'].team_name }}
+                        </div>
+                        <!--右队徽-->
+                        <div class="col-md-2 hidden-xs myCenter myTermBlock">
+                            <img src="{{ static(game['team2'].logo_addr) }}" class="img-circle" style="width: 50px; height: 50px; margin: 0 auto">
+                        </div>
+                    </div>
+                    <div class="col-md-3 hidden-xs myCenter myTermBlock">
+                        {{game['date']}}
+                    </div>
+
+                    <div class="col-md-1 hidden-xs myCenter myTermBlock">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                            数据
+                        </button>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">详细数据</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="row ">
+                                        <div class="col-md-5 myCenter">
+                                            <img src="{{ static(game['team1'].logo_addr) }}" class="img-circle" style="width: 80px; height: 80px; margin: 0 auto">
+                                        </div>
+                                        <div class="col-md-2 myCenter">
+                                            <h1>VS</h1>
+                                        </div>
+
+                                        <div class="col-md-5 myCenter">
+                                            <img src="{{ static(game['team2'].logo_addr) }}" class="img-circle" style="width: 80px; height: 80px; margin: 0 auto">
+                                        </div>
+                                    </div>
+
+
+                                    <table class="table table-hover">
+                                      <thead>
+                                        <tr>
+                                          <th>场次</th>
+                                          <th>红方</th>
+                                          <th>蓝方</th>
+                                          <th>胜者</th>
+                                          <th>红方击杀</th>
+                                          <th>蓝方击杀</th>
+                                          <th>比赛时长</th>
+                                          <th>mvp</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {% for sm_game in game['sm_games'] %}
+                                        <tr>
+                                          <th>{{ sm_game['entity'].index }}</th>
+                                          <th>{{ sm_game['red_team'].team_name }}</th>
+                                          <th>{{ sm_game['blue_team'].team_name }}</th>
+                                          <th>{{ sm_game['winner'].team_name }}</th>
+                                          <th>{{ sm_game['entity'].red_kill }}</th>
+                                          <th>{{ sm_game['entity'].blue_kill }}</th>
+                                          <th>{{ sm_game['entity'].game_time }}</th>
+                                          <th>{{ sm_game['entity'].mvp_player.game_name }}</th>
+                                        </tr>
+                                        {% endfor %}
+                                      </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+                </div>
+            </div> <!--pannel body-->
+        </div> <!--pannel-->
+    </div> <!--col-md-12 讨论区帖子表格-->
+
+
 {% endblock %}

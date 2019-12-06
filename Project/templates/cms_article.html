@@ -1,12 +1,92 @@
 {% extends 'selfcenterbase.html' %}
 {% block selfcenterbody %}
-    {% for post in my_posts %}
-    {% endfor %}
     {# 如果是管理员，则多一个所有帖子的管理 #}
-    {% if current_user.admin %}
+        <!--{% for post in all_posts %}-->
+        <!--{% endfor %}-->
+    <div class="col-md-12" >
+        <div class="panel panel-default">
+            <div class="panel-heading nav navbar-static-top" style="font-size:12px;">
+                <div class="row" style="margin-right: 0px">
+                    <!--title-->
+                    <div class="col-md-3 hidden-xs myCenter">
+                        标题
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-1 hidden-xs myCenter">
+                        评论量
+                    </div>
+                    <!--board-->
+                    <div class="col-md-2 hidden-xs myCenter">
+                        板块
+                    </div>
+                    <!--author-->
+                    <div class="col-md-2 hidden-xs myCenter">
+                        作者
+                    </div>
+                    <!--register_time-->
+                    <div class="col-md-2 hidden-xs myCenter">
+                        发表时间
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body pre-scrollable" style="border-bottom:1px solid #eee; height: 900px;">
+            {% for article in my_posts %}
+                <div class="row" style="border-bottom: 1px solid #eee">
+                    <!--title-->
+                    <div class="col-md-3 hidden-xs myCenter myBlockTerm">
+                        <a href="{{url_for('front.article',article_id=article.id)}}" >{{ article.title }}</a>
+                    </div>
+                    <!--comment_num-->
+                    <div class="col-md-1 hidden-xs myCenter myBlockTerm">
+                        <span>{{article.comment_num}}</span>
+                    </div>
+                    <!--board-->
+                    <div class="col-md-2 hidden-xs myCenter myBlockTerm">
+                        <span>{{article.board.name}}</span>
+                    </div>
+                    <!--author-->
+                    <div class="col-md-2 hidden-xs myCenter myBlockTerm">
+                        <span>{{article.author.username}}</span>
+                    </div>
+                    <!--register_time-->
+                    <div class="col-md-2 hidden-xs myCenter myBlockTerm" >
+                        <span>{{article.register_time}}</span>
+                    </div>
+                    <div class="col-md-2 hidden-sm myCenter myBlockTerm" >
+                        <button class="btn btn-info" onclick="location.href='{{ url_for('front.cms_article',delete=1,delete_id=article.id) }}'" >删除</button>
+                    </div>
+                </div>
+            {% endfor %}
+            </div> <!--pannel body-->
+        </div> <!--pannel-->
+    </div> <!--col-md-12 讨论区帖子表格-->
 
-        {% for post in all_posts %}
-        {% endfor %}
+    <!--<div class="col-md-12">-->
+        <!--<div>-->
+            <!--<table class="table table-hover" style="vertical-align: middle;text-align: center;">-->
+                <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>标题</th>-->
+                        <!--<th>评论量</th>-->
+                        <!--<th>板块</th>-->
+                        <!--<th>作者</th>-->
+                        <!--<th>发表时间</th>-->
+                    <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                    <!--{% for article in my_posts %}-->
+                    <!--<tr>-->
+                        <!--<td><a href="{{url_for('front.article',article_id=article.id)}}" >{{ article.title }}</a></td>-->
+                        <!--<td><span>{{article.comment_num}}</span></td>-->
+                        <!--<td><span>{{article.board.name}}</span></td>-->
+                        <!--<td><span>{{article.author.username}}</span></td>-->
+                        <!--<td><span>{{article.register_time}}</span></td>-->
+                        <!--<td><button class="btn btn-info ">删除</button></td>-->
+                    <!--</tr>-->
+                    <!--{% endfor %}-->
+                <!--</tbody>-->
+            <!--</table>-->
+        <!--</div>-->
+    <!--</div> &lt;!&ndash;col-md-12 讨论区帖子表格&ndash;&gt;-->
 
-    {% endif %}
 {% endblock %}

@@ -3,29 +3,71 @@
     战队
 {% endblock %}
 
+{% block head %}
+    <style>
+        .myCenter {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+        }
+
+        .teamTop {
+            background-image: url('{{ static('img/team_background_2.jpg') }}');
+            -webkit-backdrop-filter: blur(10px);
+            height: 550px;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            -webkit-background-size: cover;
+            -o-background-size: cover;
+            -moz-background-size: cover;
+            /*{#-ms-background-size: cover;#}*/
+        }
+
+
+    </style>
+{% endblock %}
+
 {% block content %}
-    <div class="container" style="margin-top: 100px">
-        <div class="row">
-            <div class="col-md-4" id="left block">
-                        <img src="{{ static(team.logo_addr) }}" class="img-circle">
-            </div>
-            <div class="col-md-6 col-md-offset-2">
-                {% for player in team.players %}
-                    <div class="row">
-                        <div class="col-md-2"><p style="font-size: large">{{ player.position }}</p></div>
-                        <div class="col-xs-6, col-md-3">
-                            <a href="#" class="thumbnail">
-                                <img src="{{ static(player.img_addr) }}">
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="row">
 
+    <div class="jumbotron teamTop">
+
+        <div class="col-md-5 col-md-offset-1 myCenter" style="height: 500px">
+            <img src="{{ static(team.logo_addr) }}" class="img-rounded center-block" >
+        </div>
+        <div class="col-md-5  myCenter" style="color: white; height: 500px">
+            <h1>{{ team.team_name }}</h1>
+            <h2>FunPlusPhoenix</h2>
+            <!--战队描述-->
+            <p>趣加电子竞技俱乐部（FunPlusPhoenix）成立于2017年，LPL联盟成员之一，是LPL舞台上的新生势力。俱乐部Logo的浴火凤凰形象，代表着一飞冲天，追求极致，永不言弃，直面挑战的精神。凤凰在东西方文化中各自的独特寓意，也表达了趣加链接东西，多元并进的独特魅力。</p>
         </div>
 
+    </div>
+
+    <div class="row col-md-9 col-md-offset-2" >
+        <div style="border-bottom: 2px solid #eee">
+            <h1>出战成员</h1>
+        </div>
+        <br>
+    </div>
+
+    <div class="row col-md-10 col-md-offset-2">
+        {% for player in team.players %}
+
+
+        <div class="col-md-2">
+            <a href="#" class="thumbnail">
+                <span class="badge" style="width: 80px"><h4>{{ player.position }}</h4></span>
+                <img src="{{ static(player.img_addr) }}">
+                <div style="background-color: #eee">
+                    <h3 class="myCenter" style="color: black; margin: 0px 0px 0px 0px; height: 50px;">{{ player.game_name }}</h3>
+                </div>
+            </a>
+        </div>
+
+        {% endfor %}
     </div>
 
 {% endblock %}
